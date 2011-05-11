@@ -1,0 +1,21 @@
+{% extends "../layouts/layout.html" %}
+{% block title %}Pixnet Album Maker{% endblock %}
+{% block content %}
+    <div id="head">
+        <h1>Pixnet Album Maker</h1>
+    </div>
+    <div id="content">
+        <form id="form1" action="/pixnet/albums">
+            <fieldset>
+                <p>
+                    <label>Username:</label>
+                    <input type="text" id="username" name="username" value=""/>
+                </p>
+                <p>
+                    <input type="submit" id="submit" value="submit"/>
+                </p>
+            </fieldset>
+        </form>
+        <!-- this page is related to controller/welcome.py -->
+    </div>
+{% endblock %}
