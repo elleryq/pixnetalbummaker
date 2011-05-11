@@ -13,9 +13,17 @@
                 </p>
                 <p>
                     <input type="submit" id="submit" value="submit"/>
+                    <input type="button" id="btn_show" value="Show album sets"/>
                 </p>
             </fieldset>
         </form>
         <!-- this page is related to controller/welcome.py -->
     </div>
+    <script type="text/javascript">
+        $(document).ready( function() {
+            $("#btn_show").click( function() {
+                alert('hello');
+            } );
+        } );
+    </script>
 {% endblock %}
