@@ -22,7 +22,15 @@
     <script type="text/javascript">
         $(document).ready( function() {
             $("#btn_show").click( function() {
-                alert('hello');
+                var jqxhr=$.getJSON("/pixnet/albums", 
+                    {
+                        'username': $("#username").val()
+                    },
+                function() {
+                    alert("ok");
+                })
+                .success( function() { alert("ok"); } )
+                .error( function() { alert("fail"); } );
             } );
         } );
     </script>
