@@ -5,17 +5,38 @@ class PixnetController(BaseController):
     """The Pixnet Controller
     """
     def albums(self):
+        data={}
         if self.params.has_key( "username" ):
-            self.username=self.params[ "username" ]
+            username=self.params[ "username" ]
             pixnet=Pixnet()
-#print( pixnet.get_users_elleryq() )
             result = pixnet.get_album_sets( 
-                    {'user': self.username }
+                    key=None,
+                    parameters={'user': username }
                     )
-            if result['error']==0:
-                self.render(json=self.to_json(result['sets']))
-                return
-        self.render(json=self.to_json({}))
+            if result['error']==0 and result.has_key("sets"):
+                data = result['sets']
+        self.render(json=self.to_json(data))
+
+    def photos(self):
+        data={}
+        set_id=None
+        username=None
+        if self.params.has_key( "id" ):
+            set_id=self.params[ "id" ]
+        if self.params.has_key( "username" ):
+            username=self.params[ "username" ]
+        if set_id and username:
+            pixnet=Pixnet()
+            result = pixnet.get_album_elements(
+                    key=None,
+                    parameters={
+                        'set_id': set_id,
+                        'user': username
+                    }
+                    )
+            if result['error']==0 and result.has_key("elements"):
+                data = result['elements']
+        self.render(json=self.to_json(data))
 
     def albums_old(self):
         """The default method
@@ -26,7 +47,7 @@ class PixnetController(BaseController):
             pixnet=Pixnet()
 #print( pixnet.get_users_elleryq() )
             result = pixnet.get_album_sets( 
-                    {'user': self.username }
+                    parameters={'user': self.username }
                     )
             if result['error']==0:
                 self.album_sets = result["sets"]

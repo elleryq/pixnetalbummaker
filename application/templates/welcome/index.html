@@ -18,7 +18,23 @@
             </fieldset>
         </form>
         <!-- this page is related to controller/welcome.py -->
+        <div id="sets">
+        </div>
+        <div id="photos">
+        </div>
     </div>
+    <script id="albumSetTemplate" type="text/x-jquery-tmpl">
+        <div class="set">
+          <a href="javascript: showPhotos(${id});">
+          <img src="${thumb}" alt="${title}"/><br/><span>${title}</span>
+          </a>
+        </div>
+    </script>
+    <script id="photoTemplate" type="text/x-jquery-tmpl">
+        <div class="photo">
+          <img src="${thumb}" alt="${title}"/><br/><span>${title}</span>
+        </div>
+    </script>
     <script type="text/javascript">
         $(document).ready( function() {
             $("#btn_show").click( function() {
@@ -27,11 +43,27 @@
                         'username': $("#username").val()
                     },
                 function() {
-                    alert("ok");
                 })
-                .success( function() { alert("ok"); } )
+                .success( function(data) {
+                    $( "#albumSetTemplate" ).tmpl( data )
+                        .appendTo( "#sets" );
+                } )
                 .error( function() { alert("fail"); } );
             } );
         } );
+        function showPhotos( id ) {
+            var jqxhr=$.getJSON("/pixnet/photos", 
+                {
+                    'id': id,
+                    'username': $("#username").val()
+                },
+            function() {
+            })
+            .success( function(data) {
+                $( "#photoTemplate" ).tmpl( data )
+                    .appendTo( "#photos" );
+            } )
+            .error( function() { alert("fail"); } );
+        }
     </script>
 {% endblock %}
