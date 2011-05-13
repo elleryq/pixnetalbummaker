@@ -72,6 +72,10 @@
                 } )
                 .error( function() { alert("fail"); } );
             } );
+            var winHeight = $(window).height();
+            var tabHeight = winHeight - 10;
+            $tabs.height(tabHeight);
+            var contentPanelHeight = $tabs.find(".ui-tabs-panel:visible").height();
         } );
         function showPhotos( id ) {
             var $tabs=$("#tabs").tabs();
