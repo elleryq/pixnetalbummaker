@@ -2,11 +2,33 @@
 float: left;
 margin: 5px;
 padding: 5px;
+width: 120px;
+height: 120px;
+text-align: center;
+}
+.set img {
+margin: auto;
+padding: 2px;
+border: 1px solid;
+}
+.set span {
+width: 100%;
 }
 .photo {
 float: left;
 margin: 5px;
 padding: 5px;
+width: 120px;
+height: 120px;
+text-align: center;
+}
+.photo img {
+margin: auto;
+padding: 2px;
+border: 1px solid;
+}
+.photo span {
+width: 100%;
 }
 #sets {
 height: 100%;
