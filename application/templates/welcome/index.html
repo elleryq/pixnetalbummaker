@@ -52,7 +52,11 @@
     </script>
     <script type="text/javascript">
         $(document).ready( function() {
-            $("#tabs").tabs();
+            var $tabs=$("#tabs").tabs();
+            var PAGE1=0;
+            var PAGE2=1;
+            var PAGE3=2;
+            var PAGE4=3;
             $("#btn_show").click( function() {
                 var jqxhr=$.getJSON("/pixnet/albums", 
                     {
@@ -61,8 +65,10 @@
                 function() {
                 })
                 .success( function(data) {
+                    $( "#sets" ).html("");
                     $( "#albumSetTemplate" ).tmpl( data )
                         .appendTo( "#sets" );
+                    $tabs.tabs("select", PAGE2);
                 } )
                 .error( function() { alert("fail"); } );
             } );
@@ -76,8 +82,10 @@
             function() {
             })
             .success( function(data) {
+                $( "#photos" ).html("");
                 $( "#photoTemplate" ).tmpl( data )
                     .appendTo( "#photos" );
+                $tabs.tabs("select", PAGE3);
             } )
             .error( function() { alert("fail"); } );
         }
