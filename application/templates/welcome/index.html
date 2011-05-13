@@ -5,23 +5,38 @@
         <h1>Pixnet Album Maker</h1>
     </div>
     <div id="content">
-        <form id="form1" action="/pixnet/albums">
-            <fieldset>
+        <div id="tabs">
+          <ul>
+            <li><a href="#tabs-cond">Select user</a></li>
+            <li><a href="#tabs-albums">Select album</a></li>
+            <li><a href="#tabs-photos">Select photos</a></li>
+            <li><a href="#tabs-output">Output</a></li>
+          </ul>
+          <div id="tabs-cond">
+            <form id="form1" action="/pixnet/albums">
+              <fieldset>
                 <p>
-                    <label>Username:</label>
-                    <input type="text" id="username" name="username" value=""/>
+                  <label>Username:</label>
+                  <input type="text" id="username" name="username" value=""/>
                 </p>
                 <p>
-                    <input type="submit" id="submit" value="submit"/>
-                    <input type="button" id="btn_show" value="Show album sets"/>
+                  <input type="button" id="btn_show" value="Show album sets"/>
                 </p>
-            </fieldset>
-        </form>
-        <!-- this page is related to controller/welcome.py -->
-        <div id="sets">
-        </div>
-        <div id="photos">
-        </div>
+              </fieldset>
+            </form>
+          </div>
+          <div id="tabs-albums">
+            <div id="sets">
+            </div>
+          </div>
+          <div id="tabs-photos">
+            <div id="photos">
+            </div>
+          </div>
+          <div id="tabs-output">
+            <div id="output-html">
+            </div>
+          </div>
     </div>
     <script id="albumSetTemplate" type="text/x-jquery-tmpl">
         <div class="set">
@@ -37,6 +52,7 @@
     </script>
     <script type="text/javascript">
         $(document).ready( function() {
+            $("#tabs").tabs();
             $("#btn_show").click( function() {
                 var jqxhr=$.getJSON("/pixnet/albums", 
                     {
