@@ -30,11 +30,17 @@
             </div>
           </div>
           <div id="tabs-photos">
+            <div>
+              <input type="button" id="btn_generate" value="Generate"/>
+              <input type="button" id="btn_all" value="Select All"/>
+              <input type="button" id="btn_none" value="Select none"/>
+            </div>
             <div id="photos">
             </div>
           </div>
           <div id="tabs-output">
             <div id="output-html">
+              <textarea id="html_textarea"></textarea>
             </div>
           </div>
     </div>
@@ -74,9 +80,32 @@
                 .error( function() { alert("fail"); } );
             } );
             var winHeight = $(window).height();
-            var tabHeight = winHeight - 10;
+            var tabHeight = (winHeight - 10)*10;
             $tabs.height(tabHeight);
-            var contentPanelHeight = $tabs.find(".ui-tabs-panel:visible").height();
+            //var contentPanelHeight = $tabs.find(".ui-tabs-panel:visible").height();
+            $("#btn_generate").click( function() {
+                var html_str="";
+                $( "#photos input:checkbox" ).each( function() {
+                    if( $(this).attr('checked') ) {
+                        var img=$(this).parent().children("img");
+                        html_str = html_str + "<a href='"+img.attr("src")+"' alt='" + img.attr("alt") + "'/>";
+                    }
+                } );
+                $("#html_textarea").val( html_str );
+                $tabs.tabs("select", PAGE4);
+            } );
+            $("#btn_all").click( function() {
+                $( "#photos input:checkbox" ).each( function() {
+                    var element=$(this);
+                    if( !element.attr('checked') )
+                        element.attr('checked', true);
+                } );
+            } );
+            $("#btn_none").click( function() {
+                $( "#photos input:checkbox" ).each( function() {
+                    $(this).attr('checked', false);
+                } );
+            } );
         } );
         function showPhotos( id ) {
             var $tabs=$("#tabs").tabs();
