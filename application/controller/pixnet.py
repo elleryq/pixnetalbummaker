@@ -6,15 +6,21 @@ class PixnetController(BaseController):
     """
     def albums(self):
         data={}
+        username=None
+        page=1
         if self.params.has_key( "username" ):
             username=self.params[ "username" ]
+        if self.params.has_key( "page" ):
+            page=self.params[ "page" ]
+        if username and page:
             pixnet=Pixnet()
-            result = pixnet.get_album_sets( 
+            data = pixnet.get_album_sets( 
                     key=None,
-                    parameters={'user': username }
+                    parameters={
+                        'user': username,
+                        'page': page 
+                      }
                     )
-            if result['error']==0 and result.has_key("sets"):
-                data = result['sets']
         self.render(json=self.to_json(data))
 
     def photos(self):

@@ -27,10 +27,11 @@
           </div>
           <div id="tabs-albums">
             <div>
-              <input type="button" id="btn_a_first" value="First"/>
-              <input type="button" id="btn_a_prev" value="Previous"/>
-              <input type="button" id="btn_a_next" value="Next"/>
-              <input type="button" id="btn_a_last" value="Last"/>
+              <input type="button" id="a_first" value="First"/>
+              <input type="button" id="a_prev" value="Previous"/>
+              <input type="text" id="a_current" disabled=true value="" />
+              <input type="button" id="a_next" value="Next"/>
+              <input type="button" id="a_last" value="Last"/>
             </div>
             <div id="sets">
             Empty.
@@ -76,6 +77,11 @@
         var PAGE2=1;
         var PAGE3=2;
         var PAGE4=3;
+        var current_page=1;
+        var total_pages=0;
+        var username="";
+        var $tabs;
+
         // Author: Ariel Flesler
         // http://flesler.blogspot.com/2008/11/fast-trim-function-for-javascript.html
         // Licensed under BSD
@@ -86,27 +92,66 @@
           while (this.charCodeAt(++start) < 33);
           return this.slice(start, end + 1);
         };
-        $(document).ready( function() {
-            var $tabs=$("#tabs").tabs();
-            $("#btn_show").click( function() {
-                var username=$("#username").val().trim();
-                if( username=="" ) {
-                  alert( "username is empty." );
-                  return;
+        function resetNavigation( prefix ) {
+            $( prefix+"_first" ).attr( "disabled", true );
+            $( prefix+"_prev" ).attr( "disabled", true );
+            $( prefix+"_next" ).attr( "disabled", true );
+            $( prefix+"_last" ).attr( "disabled", true );
+        }
+        function updateNavigation( prefix, page, total, pagesize ) {
+            total_pages=Math.floor(total/pagesize)+1;
+            $( prefix+"_current" ).val( page );
+            if( page==1 ) {
+                $( prefix+"_first" ).attr( "disabled", true );
+                $( prefix+"_prev" ).attr( "disabled", true );
+                $( prefix+"_next" ).attr( "disabled", false );
+                $( prefix+"_last" ).attr( "disabled", false );
+            }
+            else if( page==total_pages ) {
+                $( prefix+"_first" ).removeAttr( "disabled" );
+                $( prefix+"_prev" ).removeAttr( "disabled" );
+                $( prefix+"_next" ).attr( "disabled", true );
+                $( prefix+"_last" ).attr( "disabled", true );
+            }
+            else {
+                $( prefix+"_first" ).removeAttr( "disabled" );
+                $( prefix+"_prev" ).removeAttr( "disabled" );
+                $( prefix+"_next" ).removeAttr( "disabled" );
+                $( prefix+"_last" ).removeAttr( "disabled" );
+            }
+        }
+        function get_album_sets( param ) {
+          var jqxhr=$.getJSON("/pixnet/albums", param,
+            function() {
+            })
+            .success( function(data) {
+                if( data.error==0 ) {
+                  $( "#sets" ).empty();
+                  $( "#albumSetTemplate" ).tmpl( data.sets )
+                    .appendTo( "#sets" );
+                  updateNavigation( "#a", data.page, data.total, data.per_page );
+                  current_page=data.page;
+                  $tabs.tabs("select", PAGE2);
                 }
-                var jqxhr=$.getJSON("/pixnet/albums", 
-                    {
-                        'username': username
-                    },
-                function() {
-                })
-                .success( function(data) {
-                    $( "#sets" ).empty();
-                    $( "#albumSetTemplate" ).tmpl( data )
-                        .appendTo( "#sets" );
-                    $tabs.tabs("select", PAGE2);
-                } )
-                .error( function() { alert("fail"); } );
+                else {
+                  alert( data.message );
+                }
+            } )
+            .error( function() { alert("fail"); } );
+        }
+        function check_username() {
+            username=$("#username").val().trim();
+            if( username=="" ) {
+              alert( "username is empty." );
+              return false;
+            }
+            return true;
+        }
+        $(document).ready( function() {
+            $tabs=$("#tabs").tabs();
+            $("#btn_show").click( function() {
+                if( check_username() )
+                    get_album_sets( { 'username': username } );
             } );
             var winHeight = $(window).height();
             var tabHeight = (winHeight - 10)*10;
@@ -145,6 +190,34 @@
                 $( "#photos input:checkbox" ).each( function() {
                     $(this).attr('checked', false);
                 } );
+            } );
+            $("#a_first").click( function() {
+                if( check_username() )
+                    get_album_sets( { 
+                        'username': username,
+                        'page': 1
+                    } );
+            } );
+            $("#a_prev").click( function() {
+                if( check_username() && current_page>1 )
+                    get_album_sets( { 
+                        'username': username,
+                        'page': current_page-1
+                    } );
+            } );
+            $("#a_next").click( function() {
+                if( check_username() && current_page<=total_pages )
+                    get_album_sets( { 
+                        'username': username,
+                        'page': current_page+1
+                    } );
+            } );
+            $("#a_last").click( function() {
+                if( check_username() )
+                    get_album_sets( { 
+                        'username': username,
+                        'page': total_pages
+                    } );
             } );
         } );
         function showPhotos( id ) {
