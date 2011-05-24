@@ -221,13 +221,16 @@
             } );
         } );
         function showPhotos( id ) {
-            var $tabs=$("#tabs").tabs();
+            if( !check_username() ) {
+                alert( "username is empty" );
+                return;
+            }
             var jqxhr=$.getJSON("/pixnet/photos", 
                 {
                     'id': id,
-                    'username': $("#username").val()
+                    'username': username
                 },
-            function() {
+                function() {
             })
             .success( function(data) {
                 $( "#photos" ).empty();
