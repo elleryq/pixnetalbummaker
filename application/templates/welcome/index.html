@@ -73,12 +73,17 @@
         </div>
     </script>
     <script type="text/javascript">
+        // tabs page constant
         var PAGE1=0;
         var PAGE2=1;
         var PAGE3=2;
         var PAGE4=3;
+
+        // album sets
         var current_page=1;
         var total_pages=0;
+
+        // common
         var username="";
         var $tabs;
 
@@ -92,6 +97,8 @@
           while (this.charCodeAt(++start) < 33);
           return this.slice(start, end + 1);
         };
+
+        // Utilities
         function resetNavigation( prefix ) {
             $( prefix+"_first" ).attr( "disabled", true );
             $( prefix+"_prev" ).attr( "disabled", true );
@@ -147,10 +154,14 @@
             }
             return true;
         }
+
+        // event handlers in page 1
         function btn_show_click() {
             if( check_username() )
                 get_album_sets( { 'username': username } );
         }
+
+        // event handlers in page 3
         function btn_generate_click() {
             var style_str="<style type='text/css'>"+
 ".Album { width: 100%; background: #f5f5f5; padding: 5px;}"+
@@ -185,6 +196,8 @@
                 $(this).attr('checked', false);
             } );
         }
+
+        // The entry
         $(document).ready( function() {
             $tabs=$("#tabs").tabs();
             var winHeight = $(window).height();
