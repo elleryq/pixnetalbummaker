@@ -59,7 +59,7 @@
     </div>
     <script id="albumSetTemplate" type="text/x-jquery-tmpl">
         <div class="set">
-          <a href="javascript: showPhotos(${id});">
+          <a href="javascript: show_photos(${id});">
           <img src="${thumb}" alt="${title}"/><br/><span>${title}</span>
           </a>
         </div>
@@ -139,6 +139,21 @@
                   updateNavigation( "#a", data.page, data.total, data.per_page );
                   current_page=data.page;
                   $tabs.tabs("select", PAGE2);
+                }
+                else {
+                  alert( data.message );
+                }
+            } )
+            .error( function() { alert("fail"); } );
+        }
+        function get_album_elements( param ) {
+            var jqxhr=$.getJSON("/pixnet/photos", param, function() { })
+            .success( function(data) {
+                if( data.error==0 ) {
+                    $( "#photos" ).empty();
+                    $( "#photoTemplate" ).tmpl( data.elements )
+                        .appendTo( "#photos" );
+                    $tabs.tabs("select", PAGE3);
                 }
                 else {
                   alert( data.message );
@@ -249,30 +264,15 @@
             $("#btn_none").click( btn_none_click );
         } );
 
-        function showPhotos( id ) {
+        function show_photos( id ) {
             if( !check_username() ) {
                 alert( "username is empty" );
                 return;
             }
-            var jqxhr=$.getJSON("/pixnet/photos", 
-                {
-                    'id': id,
-                    'username': username
-                },
-                function() {
-            })
-            .success( function(data) {
-                if( data.error==0 ) {
-                    $( "#photos" ).empty();
-                    $( "#photoTemplate" ).tmpl( data.elements )
-                        .appendTo( "#photos" );
-                    $tabs.tabs("select", PAGE3);
-                }
-                else {
-                  alert( data.message );
-                }
-            } )
-            .error( function() { alert("fail"); } );
+            get_album_elements( {
+                'id': id,
+                'username': username
+            });
         }
     </script>
 {% endblock %}
