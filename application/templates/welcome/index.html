@@ -233,10 +233,15 @@
                 function() {
             })
             .success( function(data) {
-                $( "#photos" ).empty();
-                $( "#photoTemplate" ).tmpl( data )
-                    .appendTo( "#photos" );
-                $tabs.tabs("select", PAGE3);
+                if( data.error==0 ) {
+                    $( "#photos" ).empty();
+                    $( "#photoTemplate" ).tmpl( data.elements )
+                        .appendTo( "#photos" );
+                    $tabs.tabs("select", PAGE3);
+                }
+                else {
+                  alert( data.message );
+                }
             } )
             .error( function() { alert("fail"); } );
         }

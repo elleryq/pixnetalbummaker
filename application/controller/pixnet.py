@@ -27,21 +27,23 @@ class PixnetController(BaseController):
         data={}
         set_id=None
         username=None
+        page=1
         if self.params.has_key( "id" ):
             set_id=self.params[ "id" ]
         if self.params.has_key( "username" ):
             username=self.params[ "username" ]
-        if set_id and username:
+        if self.params.has_key( "page" ):
+            page=self.params[ "page" ]
+        if set_id and username and page:
             pixnet=Pixnet()
-            result = pixnet.get_album_elements(
+            data = pixnet.get_album_elements(
                     key=None,
                     parameters={
                         'set_id': set_id,
-                        'user': username
+                        'user': username,
+                        'page': page
                     }
                     )
-            if result['error']==0 and result.has_key("elements"):
-                data = result['elements']
         self.render(json=self.to_json(data))
 
     def index(self):
