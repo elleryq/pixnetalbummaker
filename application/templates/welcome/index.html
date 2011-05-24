@@ -173,27 +173,32 @@
             $("#html_textarea").val( style_str+html_str );
             $tabs.tabs("select", PAGE4);
         }
+        function btn_all_click() {
+            $( "#photos input:checkbox" ).each( function() {
+                var element=$(this);
+                if( !element.attr('checked') )
+                    element.attr('checked', true);
+            } );
+        }
+        function btn_none_click() {
+            $( "#photos input:checkbox" ).each( function() {
+                $(this).attr('checked', false);
+            } );
+        }
         $(document).ready( function() {
             $tabs=$("#tabs").tabs();
             var winHeight = $(window).height();
             var tabHeight = (winHeight - 10)*10;
             $tabs.height(tabHeight);
             //var contentPanelHeight = $tabs.find(".ui-tabs-panel:visible").height();
-            // initialize events.
+            // initialize events in page 1.
             $("#btn_show").click( btn_show_click );
+
+            // initialize events in page 3.
             $("#btn_generate").click( btn_generate_click );
-            $("#btn_all").click( function() {
-                $( "#photos input:checkbox" ).each( function() {
-                    var element=$(this);
-                    if( !element.attr('checked') )
-                        element.attr('checked', true);
-                } );
-            } );
-            $("#btn_none").click( function() {
-                $( "#photos input:checkbox" ).each( function() {
-                    $(this).attr('checked', false);
-                } );
-            } );
+            $("#btn_all").click( btn_all_click );
+            $("#btn_none").click( btn_none_click );
+
             $("#a_first").click( function() {
                 if( check_username() )
                     get_album_sets( { 
