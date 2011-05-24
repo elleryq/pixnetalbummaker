@@ -44,25 +44,5 @@ class PixnetController(BaseController):
                 data = result['elements']
         self.render(json=self.to_json(data))
 
-    def albums_old(self):
-        """The default method
-        related to templates/pixnet/albums.html
-        """
-        if self.params.has_key( "username" ):
-            self.username=self.params[ "username" ]
-            pixnet=Pixnet()
-#print( pixnet.get_users_elleryq() )
-            result = pixnet.get_album_sets( 
-                    parameters={'user': self.username }
-                    )
-            if result['error']==0:
-                self.album_sets = result["sets"]
-                self.rawdata = repr( self.album_sets )
-            else:
-                self.rawdata = "Error happened."
-        else:
-            self.username="Anonymouse"
-            self.username=",".join( self.params.keys() )
-
     def index(self):
         pass
