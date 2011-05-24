@@ -161,6 +161,36 @@
                 get_album_sets( { 'username': username } );
         }
 
+        // event handlers in page 2
+        function a_first_click() {
+            if( check_username() )
+                get_album_sets( { 
+                    'username': username,
+                    'page': 1
+                } );
+        }
+        function a_prev_click() {
+            if( check_username() && current_page>1 )
+                get_album_sets( { 
+                    'username': username,
+                    'page': current_page-1
+                } );
+        }
+        function a_next_click() {
+            if( check_username() && current_page<=total_pages )
+                get_album_sets( { 
+                    'username': username,
+                    'page': current_page+1
+                } );
+        }
+        function a_last_click() {
+            if( check_username() )
+                get_album_sets( { 
+                    'username': username,
+                    'page': total_pages
+                } );
+        }
+
         // event handlers in page 3
         function btn_generate_click() {
             var style_str="<style type='text/css'>"+
@@ -207,40 +237,18 @@
             // initialize events in page 1.
             $("#btn_show").click( btn_show_click );
 
+            // initialize events in page 2
+            $("#a_first").click( a_first_click );
+            $("#a_prev").click( a_prev_click );
+            $("#a_next").click( a_next_click );
+            $("#a_last").click( a_last_click );
+
             // initialize events in page 3.
             $("#btn_generate").click( btn_generate_click );
             $("#btn_all").click( btn_all_click );
             $("#btn_none").click( btn_none_click );
-
-            $("#a_first").click( function() {
-                if( check_username() )
-                    get_album_sets( { 
-                        'username': username,
-                        'page': 1
-                    } );
-            } );
-            $("#a_prev").click( function() {
-                if( check_username() && current_page>1 )
-                    get_album_sets( { 
-                        'username': username,
-                        'page': current_page-1
-                    } );
-            } );
-            $("#a_next").click( function() {
-                if( check_username() && current_page<=total_pages )
-                    get_album_sets( { 
-                        'username': username,
-                        'page': current_page+1
-                    } );
-            } );
-            $("#a_last").click( function() {
-                if( check_username() )
-                    get_album_sets( { 
-                        'username': username,
-                        'page': total_pages
-                    } );
-            } );
         } );
+
         function showPhotos( id ) {
             if( !check_username() ) {
                 alert( "username is empty" );
