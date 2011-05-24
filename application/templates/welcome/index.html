@@ -42,10 +42,11 @@
               <input type="button" id="btn_generate" value="Generate"/>
               <input type="button" id="btn_all" value="Select All"/>
               <input type="button" id="btn_none" value="Select none"/>
-              <input type="button" id="btn_b_first" value="First"/>
-              <input type="button" id="btn_b_prev" value="Previous"/>
-              <input type="button" id="btn_b_next" value="Next"/>
-              <input type="button" id="btn_b_last" value="Last"/>
+              <input type="button" id="b_first" value="First"/>
+              <input type="button" id="b_prev" value="Previous"/>
+              <input type="text" id="b_current" disabled=true value="" />
+              <input type="button" id="b_next" value="Next"/>
+              <input type="button" id="b_last" value="Last"/>
             </div>
             <div id="photos">
             Empty.
@@ -79,9 +80,9 @@
         var PAGE3=2;
         var PAGE4=3;
 
-        // album sets
-        var current_page=1;
-        var total_pages=0;
+        // navigation
+        var album_navigation;
+        var photo_navigation;
 
         // common
         var username="";
@@ -99,33 +100,30 @@
         };
 
         // Utilities
-        function resetNavigation( prefix ) {
-            $( prefix+"_first" ).attr( "disabled", true );
-            $( prefix+"_prev" ).attr( "disabled", true );
-            $( prefix+"_next" ).attr( "disabled", true );
-            $( prefix+"_last" ).attr( "disabled", true );
-        }
-        function updateNavigation( prefix, page, total, pagesize ) {
-            total_pages=Math.floor(total/pagesize)+1;
-            $( prefix+"_current" ).val( page );
+        function Navigation_update() {
+            page=this.current_page;
+            $( this.prefix+"_current" ).val( page );
+            $( this.prefix+"_first" ).removeAttr( "disabled" );
+            $( this.prefix+"_prev" ).removeAttr( "disabled" );
+            $( this.prefix+"_next" ).removeAttr( "disabled" );
+            $( this.prefix+"_last" ).removeAttr( "disabled" );
             if( page==1 ) {
-                $( prefix+"_first" ).attr( "disabled", true );
-                $( prefix+"_prev" ).attr( "disabled", true );
-                $( prefix+"_next" ).attr( "disabled", false );
-                $( prefix+"_last" ).attr( "disabled", false );
+              $( this.prefix+"_first" ).attr( "disabled", true );
+              $( this.prefix+"_prev" ).attr( "disabled", true );
             }
-            else if( page==total_pages ) {
-                $( prefix+"_first" ).removeAttr( "disabled" );
-                $( prefix+"_prev" ).removeAttr( "disabled" );
-                $( prefix+"_next" ).attr( "disabled", true );
-                $( prefix+"_last" ).attr( "disabled", true );
+            if( page==this.total_pages ) {
+              $( this.prefix+"_next" ).attr( "disabled", true );
+              $( this.prefix+"_last" ).attr( "disabled", true );
             }
-            else {
-                $( prefix+"_first" ).removeAttr( "disabled" );
-                $( prefix+"_prev" ).removeAttr( "disabled" );
-                $( prefix+"_next" ).removeAttr( "disabled" );
-                $( prefix+"_last" ).removeAttr( "disabled" );
-            }
+        }
+        function Navigation_setup( page, total, pagesize ) {
+            this.current_page=page;
+            this.total_pages=Math.floor(total/pagesize)+1;
+        }
+        function Navigation( prefix ) {
+            this.prefix=prefix;
+            this.update=Navigation_update;
+            this.setup=Navigation_setup;
         }
         function get_album_sets( param ) {
           var jqxhr=$.getJSON("/pixnet/albums", param,
@@ -136,8 +134,9 @@
                   $( "#sets" ).empty();
                   $( "#albumSetTemplate" ).tmpl( data.sets )
                     .appendTo( "#sets" );
-                  updateNavigation( "#a", data.page, data.total, data.per_page );
-                  current_page=data.page;
+                  album_navigation.setup( data.page, data.total, data.per_page );
+                  album_navigation.current_page=data.page;
+                  album_navigation.update();
                   $tabs.tabs("select", PAGE2);
                 }
                 else {
@@ -153,6 +152,9 @@
                     $( "#photos" ).empty();
                     $( "#photoTemplate" ).tmpl( data.elements )
                         .appendTo( "#photos" );
+                    photo_navigation.setup(data.page, data.total, data.per_page );
+                    photo_navigation.current_page=data.page;
+                    photo_navigation.update();
                     $tabs.tabs("select", PAGE3);
                 }
                 else {
@@ -185,24 +187,25 @@
                 } );
         }
         function a_prev_click() {
-            if( check_username() && current_page>1 )
+            if( check_username() && $(this).data('nav').current_page>1 )
                 get_album_sets( { 
                     'username': username,
-                    'page': current_page-1
+                    'page': $(this).data('nav').current_page-1
                 } );
         }
         function a_next_click() {
-            if( check_username() && current_page<=total_pages )
+            if( check_username() &&
+                    $(this).data('nav').current_page<=$(this).data('nav').total_pages )
                 get_album_sets( { 
                     'username': username,
-                    'page': current_page+1
+                    'page': $(this).data('nav').current_page+1
                 } );
         }
         function a_last_click() {
             if( check_username() )
                 get_album_sets( { 
                     'username': username,
-                    'page': total_pages
+                    'page': $(this).data('nav').total_pages
                 } );
         }
 
@@ -241,6 +244,39 @@
                 $(this).attr('checked', false);
             } );
         }
+        function b_first_click() {
+            if( check_username() )
+                get_album_elementss( { 
+                    'username': username,
+                    'id': $(this).data('nav').id,
+                    'page': 1
+                } );
+        }
+        function b_prev_click() {
+            if( check_username() && $(this).data('nav').current_page>1 )
+                get_album_elements( { 
+                    'username': username,
+                    'id': $(this).data('nav').id,
+                    'page': $(this).data('nav').current_page-1
+                } );
+        }
+        function b_next_click() {
+            if( check_username() &&
+                    $(this).data('nav').current_page<=$(this).data('nav').total_pages )
+                get_album_elements( { 
+                    'username': username,
+                    'id': $(this).data('nav').id,
+                    'page': $(this).data('nav').current_page+1
+                } );
+        }
+        function b_last_click() {
+            if( check_username() )
+                get_album_elements( { 
+                    'username': username,
+                    'id': $(this).data('nav').id,
+                    'page': $(this).data('nav').total_pages
+                } );
+        }
 
         // The entry
         $(document).ready( function() {
@@ -253,15 +289,29 @@
             $("#btn_show").click( btn_show_click );
 
             // initialize events in page 2
-            $("#a_first").click( a_first_click );
-            $("#a_prev").click( a_prev_click );
-            $("#a_next").click( a_next_click );
-            $("#a_last").click( a_last_click );
+            album_navigation = new Navigation( "#a" );
+            $("#a_first").data( 'nav', album_navigation )
+                .click( a_first_click );
+            $("#a_prev").data( 'nav', album_navigation )
+                .click( a_prev_click );
+            $("#a_next").data( 'nav', album_navigation )
+                .click( a_next_click );
+            $("#a_last").data( 'nav', album_navigation )
+                .click( a_last_click );
 
             // initialize events in page 3.
+            photo_navigation = new Navigation( "#b" );
             $("#btn_generate").click( btn_generate_click );
             $("#btn_all").click( btn_all_click );
             $("#btn_none").click( btn_none_click );
+            $("#b_first").data( 'nav', photo_navigation )
+                .click( b_first_click );
+            $("#b_prev").data( 'nav', photo_navigation )
+                .click( b_prev_click );
+            $("#b_next").data( 'nav', photo_navigation )
+                .click( b_next_click );
+            $("#b_last").data( 'nav', photo_navigation )
+                .click( b_last_click );
         } );
 
         function show_photos( id ) {
@@ -269,6 +319,7 @@
                 alert( "username is empty" );
                 return;
             }
+            photo_navigation.id=id;
             get_album_elements( {
                 'id': id,
                 'username': username
