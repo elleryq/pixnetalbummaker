@@ -147,12 +147,13 @@
             }
             return true;
         }
+        function btn_show_click() {
+            if( check_username() )
+                get_album_sets( { 'username': username } );
+        }
         $(document).ready( function() {
             $tabs=$("#tabs").tabs();
-            $("#btn_show").click( function() {
-                if( check_username() )
-                    get_album_sets( { 'username': username } );
-            } );
+            $("#btn_show").click( btn_show_click );
             var winHeight = $(window).height();
             var tabHeight = (winHeight - 10)*10;
             $tabs.height(tabHeight);
