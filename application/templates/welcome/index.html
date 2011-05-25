@@ -133,45 +133,45 @@
             this.update=Navigation_update;
             this.setup=Navigation_setup;
         }
+        function get_album_sets_cb( data ) {
+            if( data.error==0 ) {
+              $( "#sets" ).empty();
+              $( "#albumSetTemplate" ).tmpl( data.sets )
+                .appendTo( "#sets" );
+              album_navigation.setup( data.page, data.total, data.per_page );
+              album_navigation.current_page=data.page;
+              album_navigation.update();
+              $tabs.tabs("select", PAGE2);
+              LoadAllImages( $("#sets") );
+            }
+            else {
+              alert( data.message );
+            }
+        }
         function get_album_sets( param ) {
-          var jqxhr=$.getJSON("/pixnet/albums", param,
+          $.getScript("http://emma.pixnet.cc/album/sets?callback=get_album_sets_cb&user="+param["username"]+"&page="+param["page"].toString(),
             function() {
-            })
-            .success( function(data) {
-                if( data.error==0 ) {
-                  $( "#sets" ).empty();
-                  $( "#albumSetTemplate" ).tmpl( data.sets )
-                    .appendTo( "#sets" );
-                  album_navigation.setup( data.page, data.total, data.per_page );
-                  album_navigation.current_page=data.page;
-                  album_navigation.update();
-                  $tabs.tabs("select", PAGE2);
-                  LoadAllImages( $("#sets") );
-                }
-                else {
-                  alert( data.message );
-                }
-            } )
-            .error( function() { alert("fail"); } );
+            });
+        }
+        function get_album_elements_cb( data ) {
+            if( data.error==0 ) {
+                $( "#photos" ).empty();
+                $( "#photoTemplate" ).tmpl( data.elements )
+                    .appendTo( "#photos" );
+                photo_navigation.setup(data.page, data.total, data.per_page );
+                photo_navigation.current_page=data.page;
+                photo_navigation.update();
+                $tabs.tabs("select", PAGE3);
+                LoadAllImages( $("#photos") );
+            }
+            else {
+              alert( data.message );
+            }
         }
         function get_album_elements( param ) {
-            var jqxhr=$.getJSON("/pixnet/photos", param, function() { })
-            .success( function(data) {
-                if( data.error==0 ) {
-                    $( "#photos" ).empty();
-                    $( "#photoTemplate" ).tmpl( data.elements )
-                        .appendTo( "#photos" );
-                    photo_navigation.setup(data.page, data.total, data.per_page );
-                    photo_navigation.current_page=data.page;
-                    photo_navigation.update();
-                    $tabs.tabs("select", PAGE3);
-                    LoadAllImages( $("#photos") );
-                }
-                else {
-                  alert( data.message );
-                }
-            } )
-            .error( function() { alert("fail"); } );
+            $.getScript("http://emma.pixnet.cc/album/elements?callback=get_album_elements_cb&user="+param["username"]+"&page="+param["page"].toString()+"&set_id="+param["id"].toString(),
+                    function() {
+                    } );
         }
         function check_username() {
             username=$("#username").val().trim();
@@ -185,7 +185,7 @@
         // event handlers in page 1
         function btn_show_click() {
             if( check_username() )
-                get_album_sets( { 'username': username } );
+                get_album_sets( { 'username': username, 'page': 1 } );
         }
 
         // event handlers in page 2
@@ -341,7 +341,8 @@
             photo_navigation.id=id;
             get_album_elements( {
                 'id': id,
-                'username': username
+                'username': username,
+                'page': 1
             });
         }
     </script>
