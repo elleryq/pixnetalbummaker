@@ -1,3 +1,7 @@
+/** 
+ * Reference:
+ * http://blog.realmofzod.com/blog/2009/04/09/asynchronous-image-loading-with-jquery/
+ */
 var gLoadSpinnerUrl = '/img/ajax-loader.gif';
 var gFailImage = '/img/face-surprise.png';
 
