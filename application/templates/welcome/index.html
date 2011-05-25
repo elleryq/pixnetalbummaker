@@ -61,17 +61,25 @@
     <script id="albumSetTemplate" type="text/x-jquery-tmpl">
         <div class="set">
           <a href="javascript: show_photos(${id});">
-          <img src="${thumb}" alt="${title}"/><br/><span>${title}</span>
-          </a>
+          <div class="loadable-image" src="${thumb}"
+            onload='img=$(arguments[0]);img.attr("alt", "${title}");'>
+          </div>
+          </a><br/>
+          <span>${title}</span>
         </div>
     </script>
     <script id="photoTemplate" type="text/x-jquery-tmpl">
         <div class="photo">
           <a href="${url}" title="${title}" target="_blank">
-          <img src="${thumb}" alt="${title}"/></a><br/>
+          <div class="loadable-image" src="${thumb}"
+            onload='img=$(arguments[0]);img.attr("alt", "${title}");'>
+          </div>
+          </a><br/>
           <input type="checkbox" name="checked" />
           <span><a href="${url}" title="${title}" target="_blank">${title}</a></span>
         </div>
+    </script>
+    <script type="text/javascript" src="/js/async_image_load.js">
     </script>
     <script type="text/javascript">
         // tabs page constant
@@ -138,6 +146,7 @@
                   album_navigation.current_page=data.page;
                   album_navigation.update();
                   $tabs.tabs("select", PAGE2);
+                  LoadAllImages( $("#sets") );
                 }
                 else {
                   alert( data.message );
@@ -156,6 +165,7 @@
                     photo_navigation.current_page=data.page;
                     photo_navigation.update();
                     $tabs.tabs("select", PAGE3);
+                    LoadAllImages( $("#photos") );
                 }
                 else {
                   alert( data.message );
@@ -319,6 +329,8 @@
                 alert( "username is empty" );
                 return;
             }
+            if( id==undefined )
+                return;
             photo_navigation.id=id;
             get_album_elements( {
                 'id': id,

@@ -3,13 +3,17 @@ float: left;
 margin: 5px;
 padding: 5px;
 width: 120px;
-height: 120px;
+height: 160px;
 text-align: center;
 }
 .set img {
 margin: auto;
 padding: 2px;
 border: 1px solid;
+        /*
+width: 100px;
+height: 140px;
+*/
 }
 .set span {
 width: 100%;
@@ -19,13 +23,17 @@ float: left;
 margin: 5px;
 padding: 5px;
 width: 200px;
-height: 200px;
+height: 240px;
 text-align: center;
 }
 .photo img {
 margin: auto;
 padding: 2px;
 border: 1px solid;
+        /*
+width: 180px;
+height: 200px;
+*/
 }
 .photo span {
 width: 100%;
