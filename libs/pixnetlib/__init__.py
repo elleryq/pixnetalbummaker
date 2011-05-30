@@ -50,8 +50,11 @@ def hash_hmac( digest_str, data, key, raw_output=False ):
     return r
 
 def parse_str(s):
-    import urlparse
-    return urlparse.parse_qs(s)
+    try:
+        from urlparse import parse_qs # python 2.6
+    except ImportError:
+        from cgi import parse_qs # python 2.5
+    return parse_qs(s)
 
 PIXNET_API_HTTP='http://emma.pixnet.cc'
          
@@ -180,18 +183,18 @@ class PixnetOAuth:
         return self._request_auth_url
 
     def get_access_token( self, verifier_token ):
-        message = self.http( self.ACCESS_TOKEN_URL, { # TODO
+        message = self.http( self.ACCESS_TOKEN_URL, {
                 'oauth_params': {
                     'oauth_verifier': verifier_token
                 } } )
         args = parse_str( message ) # TODO
         self._token = args['oauth_token']
         self._secret = args['oauth_token_secret']
-        return (self.token, self.secret)
+        return (self._token, self._secret)
 
     def get_request_token_pair(self):
         self._get_request_token()
-        return (self.token, self.secret)
+        return (self._token, self._secret)
 
     def http( self, url, options={} ):
         # oauth authentication
@@ -202,13 +205,11 @@ class PixnetOAuth:
             'oauth_consumer_key': self.consumer_key,
             'oauth_signature_method': 'HMAC-SHA1'
         }
-#        oauth_args['oauth_nonce']="d4778299f05938e79c7b8b4896049ee4"
-#        oauth_args['oauth_timestamp']=1306464057
         if self._token:
             oauth_args['oauth_token']=self._token
        
-        if options.has_key( 'oauth_param' ):
-            oauth_args.update( options['oauth_param'] )
+        if options.has_key( 'oauth_params' ):
+            oauth_args.update( options['oauth_params'] )
 
         parts = []
         if options.has_key( 'method' ):
