@@ -12,21 +12,17 @@ class UserController(BaseController):
         request_token=None
         request_token_=None
         verifier_token=None
-        if self.params.has_key( "request_token" ):
-            request_token=self.params['request_token']
-        if self.session.has_key( "request_token_" ):
-            request_token_=self.session['request_token_']
-        if self.params.has_key( "verifier_token" ):
-            verifier_token=self.params['verifier_token']
-        if not request_token or not request_token_ or not verifier_token:
-            self.message="request_token or request_token_ or verifier_token is None"
-            return
-        api.set_token( request_token, request_token_+request_token )
-        access_token, access_token_secret = api.get_access_token(
-                verifier_token )
-        self.session['access_token']=access_token
-        self.session['access_token_secret']=access_token_secret
-        self.session['access_token'].put()
-        self.session['access_token_secret'].put()
-        self.message="Authorized."
+        if self.params.has_key( "oauth_verifier" ):
+            verifier_token=self.params['oauth_verifier']
+        if not verifier_token:
+            self.message="verifier_token is None"
+        else:
+            access_token, access_token_secret = api.get_access_token(
+                    verifier_token )
+            self.session['access_token']=access_token
+            self.session['access_token_secret']=access_token_secret
+            self.session.put()
+            self.message="Authorized."
 
+    def authorize(self):
+        self.auth_url=api.get_auth_url()
