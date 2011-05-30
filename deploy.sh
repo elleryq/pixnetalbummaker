@@ -23,10 +23,11 @@ unset TMPFILE
 # call appcfg.py to deploy
 if [ -e /opt/google_appengine/appcfg.py ]; then
     python /opt/google_appengine/appcfg.py --noisy update .
+    echo "Updated ok!"
 else
     echo "Need Google AppEngine SDK."
 fi
 
-rm -f application/controller/user.py
+# rm -f application/controller/user.py
 
 exit 0
