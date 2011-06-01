@@ -1,4 +1,5 @@
 from gaeo.controller import BaseController
+from google.appengine.api import conf
 
 class WelcomeController(BaseController):
     """The default Controller
@@ -10,4 +11,5 @@ class WelcomeController(BaseController):
 
         related to templates/welcome/index.html
         """
-        pass
+        app_version, current_config_version, development = conf._inspect_environment()
+        self.development = development
