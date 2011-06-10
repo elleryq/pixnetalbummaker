@@ -3,20 +3,37 @@ version: 6
 runtime: python
 api_version: 1
 
+builtins:
+- remote_api: on
+
 default_expiration: "1d"
 
+inbound_services:
+- warmup
+
 handlers:
+- url: /_ah/queue/deferred
+  script: djangoappengine/deferred/handler.py
+  login: admin
+
+- url: /media/admin
+  static_dir: django/contrib/admin/media
+  expiration: '0'
+
 - url: /css
   static_dir: assets/css
 - url: /js
   static_dir: assets/js
 - url: /img
   static_dir: assets/img
+ 
 - url: /favicon.ico
   static_files: favicon.ico
   upload: favicon.ico
 - url: /robots.txt
   static_files: robots.txt
   upload: robots.txt
+
 - url: /.*
-  script: main.py
+  script: djangoappengine/main/main.py
+
