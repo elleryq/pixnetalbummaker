@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     ('^_ah/warmup$', 'djangoappengine.views.warmup'),
-    ('^$', 'django.views.generic.simple.direct_to_template',
-     {'template': 'home.html'}),
+#    ('^$', 'django.views.generic.simple.direct_to_template',
+#     {'template': 'home.html'}),
+    ('^$', 'home.views.index'),
 )
