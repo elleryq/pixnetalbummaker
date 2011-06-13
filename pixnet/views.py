@@ -1,25 +1,28 @@
 # Create your views here.
 from django.template import Context, loader
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseServerError
 from pixnet.models import Consumer
 from django.shortcuts import render_to_response
+import logging
 
 try:
     from pixnet.pixnetlib import PixnetOAuth
     consumer = Consumer.objects.get(version='1')
     api = PixnetOAuth( consumer.key, consumer.secret )
-except:
+except Exception, e:
+    logging.error('Could not create oauth url: %s' % e)
     api = None
+    raise HttpResponseServerError()
 
 def index( request ):
     output = '<p>%s</p><p>%s</p>' % (consumer.key, consumer.secret)
     return HttpResponse( output )
 
-def authorized(request, oauth_verifier):
+def authorized(request):
     v={}
     verifier_token=None
-    if oauth_verifier:
-        verifier_token=oauth_verifier
+    if 'oauth_verifier' in request.GET:
+        verifier_token=request.GET['oauth_verifier']
     if not verifier_token:
         v['message']="verifier_token is None"
     else:
