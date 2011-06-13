@@ -10,16 +10,6 @@ if [ "$answer" != "yes" ]; then
     exit -1
 fi
 
-# replace consumer key/secret
-source ~/Dropbox/Projects/pixnetalbummaker/pixnetapi_app_detail.txt
-TMPFILE="/tmp/user.py"
-cp application/controller/user.py.in $TMPFILE
-sed -i s/{consumer_key}/$consumer_key/ $TMPFILE
-sed -i s/{consumer_secret}/$consumer_secret/ $TMPFILE
-cp $TMPFILE application/controller/user.py
-rm -f $TMPFILE
-unset TMPFILE
-
 # call appcfg.py to deploy
 if [ -e /opt/google_appengine/appcfg.py ]; then
     python /opt/google_appengine/appcfg.py --noisy update .
@@ -27,7 +17,5 @@ if [ -e /opt/google_appengine/appcfg.py ]; then
 else
     echo "Need Google AppEngine SDK."
 fi
-
-# rm -f application/controller/user.py
 
 exit 0
