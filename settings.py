@@ -27,6 +27,7 @@ INSTALLED_APPS = (
     # djangoappengine should come last, so it can override a few manage.py commands
     'djangoappengine',
     'pixnet',
+    'accounts',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -61,3 +62,10 @@ DBINDEXER_BACKENDS = (
 )
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = "587"
+EMAIL_HOST_USER = '<your email address>'
+EMAIL_HOST_PASSWORD = '<your email password>'
+EMAIL_USE_TLS = True
+

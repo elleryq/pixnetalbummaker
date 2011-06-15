@@ -10,6 +10,8 @@ urlpatterns = patterns('',
     (r'^pixnet/authorized/$', 'pixnet.views.authorized'),
     (r'^pixnet/authorize/$', 'pixnet.views.authorize'),
 
+    (r'^accounts/', include('accounts.urls')),
+
     url(r'^admin/', include(admin.site.urls)),
 
     ('^_ah/warmup$', 'djangoappengine.views.warmup'),
